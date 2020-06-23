@@ -9,16 +9,22 @@ if exists("b:current_syntax")
   finish
 endif
 
+" Case sensitive
+syn case match
+
+" Comments
+syn keyword hamlerTodo TODO FIXME contained
+
 " Values
 syn match hamlerIdentifier "\<[_a-z]\(\w\|\'\)*\>"
 syn match hamlerNumber "0[xX][0-9a-fA-F]\+\|0[oO][0-7]\|[0-9]\+"
 syn match hamlerFloat "[0-9]\+\.[0-9]\+\([eE][-+]\=[0-9]\+\)\="
-syn keyword hamlerBoolean true false
+syn keyword hamlerBoolean true false otherwise
 
 " Delimiters
 syn match hamlerDelimiter "[,;|.()[\]{}]"
 
-" Type
+" Types
 syn match hamlerType "\%(\<class\s\+\)\@15<!\<\u\w*\>" contained
   \ containedin=hamlerTypeAlias
   \ nextgroup=hamlerType,hamlerTypeVar skipwhite
@@ -27,20 +33,19 @@ syn match hamlerTypeVar "\<[_a-z]\(\w\|\'\)*\>" contained
 syn region hamlerTypeExport matchgroup=hamlerType start="\<[A-Z]\(\S\&[^,.]\)*\>("rs=e-1 matchgroup=hamlerDelimiter end=")" contained extend
   \ contains=hamlerConstructor,hamlerDelimiter
 
-" Constructor
+" Constructors
 syn match hamlerConstructor "\%(\<class\s\+\)\@15<!\<\u\w*\>"
 syn region hamlerConstructorDecl matchgroup=hamlerConstructor start="\<[A-Z]\w*\>" end="\(|\|$\)"me=e-1,re=e-1 contained
   \ containedin=hamlerData,hamlerNewtype
   \ contains=hamlerType,hamlerTypeVar,hamlerDelimiter,hamlerOperatorType,hamlerOperatorTypeSig,@hamlerComment
 
-
-" Function
+" Functions
 syn match hamlerFunction "\%(\<instance\s\+\|\<class\s\+\)\@18<!\<[_a-z]\(\w\|\'\)*\>" contained
 " syn match hamlerFunction "\<[_a-z]\(\w\|\'\)*\>" contained
 syn match hamlerFunction "(\%(\<class\s\+\)\@18<!\(\W\&[^(),\"]\)\+)" contained extend
 syn match hamlerBacktick "`[_A-Za-z][A-Za-z0-9_\.]*`"
 
-" Class
+" Classes
 syn region hamlerClassDecl start="^\%(\s*\)class\>"ms=e-5 end="\<where\>\|$"
   \ contains=hamlerClass,hamlerClassName,hamlerOperatorType,hamlerOperator,hamlerType,hamlerWhere
   \ nextgroup=hamlerClass
@@ -50,7 +55,7 @@ syn match hamlerClass "\<class\>" containedin=hamlerClassDecl contained
   \ skipnl
 syn match hamlerClassName "\<[A-Z]\w*\>" containedin=hamlerClassDecl contained
 
-" Module
+" Modules
 syn match hamlerModuleName "\(\u\w\*\.\?\)*" contained excludenl
 syn match hamlerModuleKeyword "\<module\>"
 syn match hamlerModule "^module\>\s\+\<\(\w\+\.\?\)*\>"
@@ -63,7 +68,7 @@ syn region hamlerModuleParams start="(" skip="([^)]\{-})" end=")" fold contained
   \ contains=hamlerClassDecl,hamlerClass,hamlerClassName,hamlerDelimiter,hamlerType,hamlerTypeExport,hamlerStructure,hamlerModuleKeyword,@hamlerComment
   \ nextgroup=hamlerImportParams skipwhite
 
-" Import
+" Imports
 syn match hamlerImportKeyword "\<\(foreign\|import\|qualified\)\>"
 syn match hamlerImport "\<import\>\s\+\(qualified\s\+\)\?\<\(\w\+\.\?\)*"
   \ contains=hamlerImportKeyword,hamlerModuleName
@@ -88,7 +93,7 @@ syn match hamlerImportHiding "hiding"
   \ nextgroup=hamlerImportParams
   \ skipwhite
 
-" Function declaration
+" Function declarations
 syn region hamlerFunctionDecl
   \ excludenl start="^\z(\s*\)\(\(foreign\s\+import\)\_s\+\)\?[_a-z]\(\w\|\'\)*\_s\{-}\(::\|∷\)"
   \ end="^\z1\=\S"me=s-1,re=s-1 keepend
@@ -108,7 +113,7 @@ syn match hamlerForall "∀"
 
 " Keywords
 syn keyword hamlerConditional if then else
-syn keyword hamlerStatement do case of in ado
+syn keyword hamlerStatement do case of in
 syn keyword hamlerLet let
 syn keyword hamlerWhere where
 syn match hamlerStructure "\<\(data\|newtype\|type\|kind\)\>"
@@ -124,6 +129,7 @@ syn match hamlerInfix "^\(infix\|infixl\|infixr\)\>\s\+\([0-9]\+\)\s\+\(type\s\+
   \ nextgroup=hamlerFunction,hamlerOperator,@hamlerComment
 
 " Operators
+syn keyword hamlerOperator and or not bor bxor bsl bsr band bnot
 syn match hamlerOperator "\([-!#$%&\*\+/<=>\?@\\^|~:]\|\<_\>\)"
 syn match hamlerOperatorType "\%(\<instance\>.*\)\@40<!\(::\|∷\)"
   \ nextgroup=hamlerForall,hamlerType skipwhite skipnl skipempty
@@ -131,7 +137,7 @@ syn match hamlerOperatorFunction "\(->\|<-\|[\\→←]\)"
 syn match hamlerOperatorTypeSig "\(->\|<-\|=>\|<=\|::\|[∷∀→←⇒⇐]\)" contained
   \ nextgroup=hamlerType skipwhite skipnl skipempty
 
-" Type definition
+" Type definitions
 syn region hamlerData start="^data\s\+\([A-Z]\w*\)" end="^\S"me=s-1,re=s-1 transparent
 syn match hamlerDataStart "^data\s\+\([A-Z]\w*\)" contained
   \ containedin=hamlerData
@@ -150,15 +156,21 @@ syn match hamlerTypeAliasStart "^type\s\+\([A-Z]\w*\)" contained
   \ containedin=hamlerTypeAlias
   \ contains=hamlerStructure,hamlerType,hamlerTypeVar
 
-" Atom
+" Atoms
 syn match hamlerAtom ":[a-z][0-9a-zA-Z_]\+"
 
-" String
+" Binaries
+syn match hamlerBinary '\%(\/\%(\s\|\n\|%.*\n\)*\)\@<=\%(Integer\|Float\|Binary\|Bytes\|Bitstring\|Bits\|Binary\|Utf8\|Utf16\|Utf32\|Signed\|Unsigned\|Big\|Little\|Native\|Unit\)\%(\%(\s\|\n\|%.*\n\)*-\%(\s\|\n\|%.*\n\)*\%(Integer\|Float\|Binary\|Bytes\|Bitstring\|Bits\|Binary\|Utf8\|Utf16\|Utf32\|Signed\|Unsigned\|Big\|Little\|Native\|Unit\)\)*' contains=@hamlerComment
+
+" Maps
+syn match hamlerMap '#'
+
+" Strings
 syn match hamlerChar "'[^'\\]'\|'\\.'\|'\\u[0-9a-fA-F]\{4}'"
 syn region hamlerString start=+"+ skip=+\\\\\|\\"+ end=+"+ contains=@Spell
 syn region hamlerMultilineString start=+"""+ end=+"""+ fold contains=@Spell
 
-" Comment
+" Comments
 syn match hamlerLineComment "---*\([^-!#$%&\*\+./<=>\?@\\^|~].*\)\?$" contains=@Spell
 syn region hamlerBlockComment start="{-" end="-}" fold
   \ contains=hamlerBlockComment,@Spell
@@ -198,6 +210,8 @@ highlight def link hamlerTypeVar Identifier
 highlight def link hamlerForall hamlerStatement
 
 highlight def link hamlerAtom String
+highlight def link hamlerBinary Type
+highlight def link hamlerMap Structure
 highlight def link hamlerChar String
 highlight def link hamlerBacktick hamlerOperator
 highlight def link hamlerString String

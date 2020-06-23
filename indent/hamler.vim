@@ -13,6 +13,11 @@ if exists('b:did_indent')
   finish
 endif
 
+if get(g:, 'hamler_indent_disable', 0)
+  finish
+endif
+
+
 let b:did_indent = 1
 
 if !exists('g:hamler_indent_if')
