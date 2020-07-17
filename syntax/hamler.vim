@@ -158,6 +158,8 @@ syn match hamlerTypeAliasStart "^type\s\+\([A-Z]\w*\)" contained
 
 " Atoms
 syn match hamlerAtom ":[a-z][0-9a-zA-Z_]\+"
+syn match hamlerQuotedAtomModifier "\\\%(\o\{1,3}\|x\x\x\|x{\x\+}\|\^.\|.\)" contained
+syn region hamlerQuotedAtom start=/:"/ end=/"/ contains=hamlerQuotedAtomModifier
 
 " Binaries
 syn match hamlerBinary '\%(\/\%(\s\|\n\|%.*\n\)*\)\@<=\%(Integer\|Float\|Binary\|Bytes\|Bitstring\|Bits\|Binary\|Utf8\|Utf16\|Utf32\|Signed\|Unsigned\|Big\|Little\|Native\|Unit\)\%(\%(\s\|\n\|%.*\n\)*-\%(\s\|\n\|%.*\n\)*\%(Integer\|Float\|Binary\|Bytes\|Bitstring\|Bits\|Binary\|Utf8\|Utf16\|Utf32\|Signed\|Unsigned\|Big\|Little\|Native\|Unit\)\)*' contains=@hamlerComment
@@ -210,6 +212,7 @@ highlight def link hamlerTypeVar Identifier
 highlight def link hamlerForall hamlerStatement
 
 highlight def link hamlerAtom String
+highlight def link hamlerQuotedAtom String
 highlight def link hamlerBinary Type
 highlight def link hamlerMap Structure
 highlight def link hamlerChar String
