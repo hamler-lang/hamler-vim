@@ -113,7 +113,7 @@ syn match hamlerForall "∀"
 
 " Keywords
 syn keyword hamlerConditional if then else
-syn keyword hamlerStatement do case of in
+syn keyword hamlerStatement do case of in receive
 syn keyword hamlerLet let
 syn keyword hamlerWhere where
 syn match hamlerStructure "\<\(data\|newtype\|type\|kind\)\>"
